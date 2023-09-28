@@ -4,6 +4,7 @@ import { type AppType } from "next/app";
 
 import { api } from "~/utils/api";
 
+import { ToastProvider } from "~/components/ui/toast";
 import "~/styles/globals.css";
 
 const MyApp: AppType<{ session: Session | null }> = ({
@@ -11,9 +12,11 @@ const MyApp: AppType<{ session: Session | null }> = ({
   pageProps: { session, ...pageProps },
 }) => {
   return (
-    <SessionProvider session={session}>
-      <Component {...pageProps} />
-    </SessionProvider>
+    <ToastProvider>
+      <SessionProvider session={session}>
+        <Component {...pageProps} />
+      </SessionProvider>
+    </ToastProvider>
   );
 };
 
