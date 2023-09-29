@@ -2,6 +2,7 @@ import { Check, CheckCircle, Edit, Trash, X } from "lucide-react";
 import React from "react";
 import { api } from "~/utils/api";
 import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 import { useToast } from "../ui/use-toast";
 
 const SingleTodoView = (todo: {
@@ -26,7 +27,7 @@ const SingleTodoView = (todo: {
       },
     });
 
-  const { mutate, isLoading: contentChangeLoading } =
+  const { mutate: changeMutate, isLoading: contentChangeLoading } =
     api.todos.changeContent.useMutation({
       onSuccess: () => {
         void ctx.todos.getAll.invalidate();
@@ -48,6 +49,13 @@ const SingleTodoView = (todo: {
 
   const { toast } = useToast();
 
+  const handleTodoChange = () => {
+    if (editMode) {
+      changeMutate({ content: content, todoid: todo.id });
+    }
+    setEditMode(!editMode);
+  };
+
   return (
     <div className="flex flex-row items-center gap-2">
       <div
@@ -60,9 +68,19 @@ const SingleTodoView = (todo: {
         ) : (
           <X className="text-gray-400" />
         )}
-        <p className="text-md max-w-[300px] break-words font-semibold text-gray-700">
-          {todo.content}
-        </p>
+        {editMode ? (
+          <Input
+            className="text-md break-words font-semibold text-gray-700"
+            value={content}
+            placeholder="Your todo content"
+            onChange={(e) => setContent(e.target.value)}
+            autoFocus
+          />
+        ) : (
+          <p className="text-md max-w-[300px] break-words font-semibold text-gray-700">
+            {todo.content}
+          </p>
+        )}
       </div>
       <Button
         className="bg-green-200 p-2"
@@ -71,7 +89,11 @@ const SingleTodoView = (todo: {
       >
         <Check className="text-green-400" />
       </Button>
-      <Button className="bg-yellow-100 p-2">
+      <Button
+        className="bg-yellow-100 p-2"
+        disabled={content === "" || contentChangeLoading}
+        onClick={handleTodoChange}
+      >
         <Edit className="text-yellow-400" />
       </Button>
       <Button
