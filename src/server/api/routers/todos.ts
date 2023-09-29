@@ -5,7 +5,10 @@ export const todosRouter = createTRPCRouter({
   getAll: protectedProcedure.query(({ ctx }) => {
     const userId = ctx.session.user.id;
 
-    return ctx.db.todo.findMany({ where: { userId: userId } });
+    return ctx.db.todo.findMany({
+      where: { userId: userId },
+      orderBy: { createdAt: "desc" },
+    });
   }),
   create: protectedProcedure
     .input(z.object({ content: z.string().min(1) }))

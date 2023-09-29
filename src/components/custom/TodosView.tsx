@@ -2,9 +2,17 @@ import { api } from "~/utils/api";
 import { ScrollArea } from "../ui/scroll-area";
 import NewTodo from "./NewTodo";
 import SingleTodoView from "./SingleTodoView";
+import Spinner from "./Spinner";
 
 const TodosView = () => {
-  const { data } = api.todos.getAll.useQuery();
+  const { data, isLoading } = api.todos.getAll.useQuery();
+
+  if (isLoading)
+    return (
+      <div>
+        <Spinner />
+      </div>
+    );
 
   if (!data)
     return (
